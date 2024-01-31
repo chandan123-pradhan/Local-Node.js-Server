@@ -11,28 +11,22 @@ const http=require('http');
 //getting a html file content and sending to the server
 const fs=require('fs');
 const uri=require('url');
+const replaceHtml=require('./Modules/replaceHtml'); //custome module
 
 let html=fs.readFileSync('./Templetes/index.html','utf-8');
 let products=JSON.parse(fs.readFileSync('./Data/products.json','utf-8')).products
 let productListHtml=fs.readFileSync('./Data/product_list.html','utf-8');
 let productDetailsHtml=fs.readFileSync('./Data/product_item.html','utf-8');
-// let productHtmlArray=products.map((prod)=>{
-//     let output=productListHtml.replace('{{%NAME%}}',prod.name);
-//     output=output.replace('{{%BRAND%}}',prod.brand);
-//     output=output.replace('{{%PRICE%}}',prod.price);
-//     output= output.replace('{{%CATEGORY%}}',prod.category);
+
+
+// function replaceHtml(templetes, product){
+//     let output=templetes.replace('{{%NAME%}}',product.name);
+//     output=output.replace('{{%BRAND%}}',product.brand);
+//     output=output.replace('{{%PRICE%}}',product.price);
+//     output= output.replace('{{%CATEGORY%}}',product.category);
    
 //     return output;
-// })
-
-function replaceHtml(templetes, product){
-    let output=templetes.replace('{{%NAME%}}',product.name);
-    output=output.replace('{{%BRAND%}}',product.brand);
-    output=output.replace('{{%PRICE%}}',product.price);
-    output= output.replace('{{%CATEGORY%}}',product.category);
-   
-    return output;
-}
+// }
 
 const server=http.createServer((request, response)=>{
     // response.end(html) //sending index.html file content to the server
