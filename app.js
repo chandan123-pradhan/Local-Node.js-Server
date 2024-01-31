@@ -10,24 +10,35 @@ const http=require('http');
 
 //getting a html file content and sending to the server
 const fs=require('fs');
+const uri=require('url');
 
 let html=fs.readFileSync('./Templetes/index.html','utf-8');
 let products=JSON.parse(fs.readFileSync('./Data/products.json','utf-8')).products
 let productListHtml=fs.readFileSync('./Data/product_list.html','utf-8');
+let productDetailsHtml=fs.readFileSync('./Data/product_item.html','utf-8');
+// let productHtmlArray=products.map((prod)=>{
+//     let output=productListHtml.replace('{{%NAME%}}',prod.name);
+//     output=output.replace('{{%BRAND%}}',prod.brand);
+//     output=output.replace('{{%PRICE%}}',prod.price);
+//     output= output.replace('{{%CATEGORY%}}',prod.category);
+   
+//     return output;
+// })
 
-let productHtmlArray=products.map((prod)=>{
-    let output=productListHtml.replace('{{%NAME%}}',prod.name);
-    output=output.replace('{{%BRAND%}}',prod.brand);
-    output=output.replace('{{%PRICE%}}',prod.price);
-    output= output.replace('{{%CATEGORY%}}',prod.category);
+function replaceHtml(templetes, product){
+    let output=templetes.replace('{{%NAME%}}',product.name);
+    output=output.replace('{{%BRAND%}}',product.brand);
+    output=output.replace('{{%PRICE%}}',product.price);
+    output= output.replace('{{%CATEGORY%}}',product.category);
    
     return output;
-})
+}
 
 const server=http.createServer((request, response)=>{
     // response.end(html) //sending index.html file content to the server
-    let path=request.url;
-    let message='';
+    // let path=request.url;
+    // let message='';
+    let {query,pathname:path}=uri.parse(request.url,true);
     switch(path.toLowerCase()){
         case '/':
             response.writeHead(200,{
@@ -54,13 +65,30 @@ const server=http.createServer((request, response)=>{
             response.end(message);
             break;
             case '/products':
+               
+                if(!query.id){
+                    
                 response.writeHead(200,{
                     'content-type':'text/html',
                 });//setting status code.
+                let productHtmlArray= products.map((prod)=>{
+                    return replaceHtml(productListHtml, prod);
+                })
                 // response.end('you are in product page');
                 let productRes=html.replace('{{%CONTENT%}}',productHtmlArray.join(','))
                 response.end(productRes);
-                console.log(productRes);
+            }else{
+                response.writeHead(200,{
+                    'content-type':'text/html',
+                });//setting status code.
+                let productHtmlArray= products.map((prod)=>{
+                    return replaceHtml(productDetailsHtml, prod);
+                })
+                // response.end('you are in product page');
+                let productRes=html.replace('{{%CONTENT%}}',productHtmlArray.join(','))
+                response.end(productRes);
+            }
+                
                 break;
         default:
             response.writeHead(404);
