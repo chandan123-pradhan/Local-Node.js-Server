@@ -109,10 +109,9 @@ let myEmiter = new user(); //creating event emiter class object.
 
 const server = http.createServer();//creating server.
 
-server.on('request', (request, response) => {
-    response.end("Server is started");
-
-});
+// server.on('request', (request, response) => {
+//     response.end("Server is started");
+// });
 
 
 
@@ -122,13 +121,47 @@ server.listen(8002, '127.0.0.1', () => {
 });
 
 
-myEmiter.on('userCreated', (name, age) => {
-    console.log(`New user ${name} is created and his age is ${age}`);
-})
+// myEmiter.on('userCreated', (name, age) => {
+//     console.log(`New user ${name} is created and his age is ${age}`);
+// })
 
-myEmiter.on('userCreated', (name, age) => {
-    console.log(`New user ${name} is added and his age is ${age}`);
-})  //Its posible to create multiple event with same event name.
+// myEmiter.on('userCreated', (name, age) => {
+//     console.log(`New user ${name} is added and his age is ${age}`);
+// })  //Its posible to create multiple event with same event name.
 
-myEmiter.emit('userCreated', 'chandan', '22');//here chandan and 22 is parameters which we are expecting during listining.
+// myEmiter.emit('userCreated', 'chandan', '22');//here chandan and 22 is parameters which we are expecting during listining.
 
+
+
+
+
+
+ //Readable and Writable Streams.
+// server.on('request', (req, res) => {
+//     let rs = fs.createReadStream('./Files/large1_file.txt')
+
+//     rs.on('data', (chunk) => {
+//         res.write(chunk);
+
+//     });
+//     rs.on('end', () => {
+
+//         res.end();
+//     })
+
+//     rs.on('error', (error) => {
+//         res.writeHead(400, {
+//             'content-type': 'text/html',
+//         });
+//         res.end(error.message);//error will show into console
+//     })
+// });
+
+
+//Pipe Method
+
+server.on('request', (req, res) => {
+        let rs = fs.createReadStream('./Files/large_file.txt')
+        rs.pipe(res);
+        //redableSource.pipe(writeableDest);
+});
